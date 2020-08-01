@@ -1,4 +1,6 @@
-#pragma once
+#ifndef XMLPARSER_H
+#define XMLPARSER_H
+
 #include "lib/tinyxml2.h"
 #include <iostream>
 #include <vector>
@@ -35,3 +37,4 @@ private:
 
     double (*eneryCost)(std::map<std::string, int>, std::map<int, double> );
 };
+#endif

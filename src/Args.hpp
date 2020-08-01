@@ -1,4 +1,4 @@
-#pragma once
+
 #ifndef Args_h
 #define Args_h
 

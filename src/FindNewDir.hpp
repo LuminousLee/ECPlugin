@@ -1,4 +1,6 @@
-#pragma once
+#ifndef FINDNEWDIR_H
+#define FINDNEWDIR_H
+
 #include <stdio.h>
 #include <string>
 #include "Executer.hpp"
@@ -20,3 +22,4 @@ string findNewDir(string templet){
     }
     return res;
 }
+#endif

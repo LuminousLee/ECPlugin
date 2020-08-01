@@ -1,4 +1,4 @@
-#pragma once
+
 #ifndef ECMODEL_H
 #define ECMODEL_H
 

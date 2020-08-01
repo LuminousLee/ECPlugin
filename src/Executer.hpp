@@ -1,4 +1,6 @@
-#pragma once
+#ifndef EXECUTER_H
+#define EXECUTER_H
+
 #include <cstdio>
 #include <iostream>
 #include <string>
@@ -21,3 +23,5 @@ private:
     string parent(int in);
     popen_res mypopen(char *cmd,char type);
 };
+
+#endif
