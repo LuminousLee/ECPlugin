@@ -19,6 +19,8 @@ make install
 
 ECPlugin [hpcrun-paras] [app] [app-paras] --prof [hpcprof-paras] --mpi [mpi-paras]
 
+#Database will be output to current directory
+
   #Note:
 
   --mpi [mpi-paras] can be ignored.  (ECPlugin [hpcrun-paras] [app] [app-paras] --prof [hpcprof-paras])
