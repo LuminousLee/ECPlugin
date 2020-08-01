@@ -8,7 +8,6 @@ ECPlugin : main.o
 	g++ ./*.o -o $(OUT_DIR)/ECPlugin
 main.o : Args.o ECModel.o Executer.o XMLParser.o FindNewDir.o
 	g++ -c $(SRC_DIR)/main.cpp
-	mkdir $(OUT_DIR)
 Args.o : ECModel.o
 	g++ -c $(SRC_DIR)/Args.hpp $(SRC_DIR)/Args.cpp
 ECModel.o :
