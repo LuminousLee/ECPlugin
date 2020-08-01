@@ -12,6 +12,10 @@ make
 
 make install
 
+#Clean:
+
+make clean
+
 #ECPlugin will be output to the bin directory and copied to the /usr/bin directory(this is a system path directory)
 #
 
