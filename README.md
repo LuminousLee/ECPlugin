@@ -32,7 +32,7 @@ ECPlugin [hpcrun-paras] [app] [app-paras] --struct [hpcstruct-file] --prof [hpcp
   --mpi [mpi-paras] can be ignored.  (ECPlugin [hpcrun-paras] [app] [app-paras] --prof [hpcprof-paras])
 
   Do not use any parameters that change the measurements / structure / database output directory
-
+#
 
 #model.hpcmodel:
 
@@ -43,7 +43,7 @@ ECPlugin [hpcrun-paras] [app] [app-paras] --struct [hpcstruct-file] --prof [hpcp
   event: $2 : cache-misses
 
   model: $1 + $2 = MyModel
-  
+
 
   #Note:
 
