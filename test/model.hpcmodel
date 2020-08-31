@@ -1,0 +1,4 @@
+event: $1:CPUTIME@5000
+event: $2:instructions
+event: $3:cache-misses
+model: 47.675 + 23.834*$1 + 2.093*$2 + 72.113*$3 = EneryCost

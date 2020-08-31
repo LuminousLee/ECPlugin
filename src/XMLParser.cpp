@@ -31,7 +31,13 @@ bool XMLParser::loadXML(std::string path){
 }
 
 void XMLParser::loadECArgs(std::vector<std::string> event_list){
-    this->event_list = event_list;
+    for(std::vector<std::string>::iterator it=event_list.begin(); it!=event_list.end(); it++){
+        int pos = (*it).find("@");
+        if(pos != std::string::npos){
+            this->event_list.push_back((*it).substr(0, pos));
+        }else this->event_list.push_back(*it);
+    }
+    //this->event_list = event_list;
     if( !XMLParser::findEvent()){
         std::cout << "event not found in experiment.xml" <<std::endl;
         exit(-3);
@@ -106,9 +112,9 @@ bool XMLParser::insertHeader(){
     }
 
     XMLElement *newMetricElmt = docXML.NewElement("Metric");
-    newMetricElmt->SetAttribute("i", this->nextI);
-    newMetricElmt->SetAttribute("n", "Energy consumption");
-    newMetricElmt->SetAttribute("v", "derived-incr");
+    newMetricElmt->SetAttribute("i", this->nextI); 
+    newMetricElmt->SetAttribute("n", this->modelName.c_str());
+    newMetricElmt->SetAttribute("v", "raw");
     newMetricElmt->SetAttribute("em", "0");
     newMetricElmt->SetAttribute("es", "0");
     newMetricElmt->SetAttribute("ep", "0");
@@ -149,6 +155,7 @@ bool XMLParser::insertHeader(){
     //newElmt->SetAttribute("n", nextI);
     
     //parentNode->InsertAfterChild(thisNode, newElmt);
+    
     return true;
 }
 
@@ -157,7 +164,7 @@ void XMLParser::findMetricDataAndCal(XMLElement *elmt){
     std::stringstream ss;
     s.push(elmt);  
     XMLElement* t_elmt; 
-
+    bool avail_flag = false;
     long numberOfFound = 0;
   
     while(!s.empty())  {
@@ -176,7 +183,7 @@ void XMLParser::findMetricDataAndCal(XMLElement *elmt){
                 iter++;
             }
             std::vector<std::string>::iterator viter = this->event_list.begin();
-            bool avail_flag = false;
+            avail_flag = false;
             while(viter != event_list.end()){
                 if(name.find(*viter)!=std::string::npos){
                 //if(*viter == name){
@@ -228,11 +235,12 @@ void XMLParser::findMetricDataAndCal(XMLElement *elmt){
             
             XMLElement* t = t_elmt->NextSiblingElement();
             while(t != NULL){
-                if(std::string(t->Name())!="M") break;
+                if(std::string(t->Name())=="M") break;
                 t_elmt = t;
                 t = t->NextSiblingElement();
             }
         }
+        while(avail_flag && !s.empty() && std::string(s.top()->Name())=="M") s.pop();
         t_elmt = t_elmt->FirstChildElement();
         while(t_elmt != NULL){
             s.push(t_elmt);
@@ -255,7 +263,8 @@ void XMLParser::findMetricDataAndCal(XMLElement *elmt){
 	}
 	fs.close();
 
-    std::cout << "number of ec : " << numberOfFound << std::endl;
+    std::cout << XMLParser::modelName << ": Total of data : " << numberOfFound << std::endl;
+    this->nextI++;
 }
 
 bool XMLParser::getEventValues(XMLElement *elmt){

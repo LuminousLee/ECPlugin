@@ -10,7 +10,7 @@ using namespace std;
 string findNewDir(string templet){
     Executer exec;
     //string cmd = "ls -lt";
-    string ls = exec.exec("ls -lt");
+    string ls = exec.exec("ls -lt", 1);
     string res = "";
     int pos = ls.find(templet);
     if(pos != string::npos){

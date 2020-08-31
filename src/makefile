@@ -6,7 +6,7 @@ OUT_DIR := ../bin
 
 ECPlugin : main.o
 	g++ ./*.o -o $(OUT_DIR)/ECPlugin
-main.o : Args.o ECModel.o Executer.o XMLParser.o FindNewDir.o
+main.o : Args.o ECModel.o Executer.o XMLParser.o FindNewDir.o ModelLoader.o
 	g++ -c $(SRC_DIR)/main.cpp
 Args.o : ECModel.o
 	g++ -c $(SRC_DIR)/Args.hpp $(SRC_DIR)/Args.cpp
@@ -16,6 +16,8 @@ Executer.o :
 	g++ -c $(SRC_DIR)/Executer.cpp $(SRC_DIR)/Executer.hpp
 XMLParser.o : TinyXML.o ECModel.o
 	g++ -c $(SRC_DIR)/XMLParser.cpp $(SRC_DIR)/XMLParser.hpp
+ModelLoader.o :
+	g++ -c $(SRC_DIR)/ModelLoader.cpp $(SRC_DIR)/ModelLoader.hpp
 TinyXML.o : 
 	g++ -c $(LIB_DIR)/tinyxml2.h $(LIB_DIR)/tinyxml2.cpp
 FindNewDir.o : Executer.o

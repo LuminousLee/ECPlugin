@@ -1,6 +1,7 @@
 #include "Executer.hpp"
 #include <iostream>
 #include <string>
+#include <vector>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -12,7 +13,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define MAXLINE 1024
+#define MAXLINE 2048
 #define FIFO "stdout_fifo"
 
 using namespace std;
@@ -25,15 +26,66 @@ Executer::~Executer(){
 
 }
 
-string Executer::exec(string cmd){
+string Executer::exec(string cmd, int pipeflag, string argv){
     string res = "";
     try{
-        res = Executer::execute(cmd);
+        if(pipeflag == 1){
+            res = Executer::execute(cmd);
+        }else{
+            Executer::forkAndExec(cmd, argv);
+        }
+        
     }catch(exception e){
         cout << "execute failed\n" << e.what() << endl;
         return "error";
     }
     return res;
+}
+
+void Executer::forkAndExec(string cmd, string argv){
+    pid_t pid;
+    int status;
+    int cnt = 1;
+    char* args[MAXLINE];
+    string arg = argv;
+    vector<string> vec;
+    if(vec.size()>0) vec.clear();
+    int length=arg.length();
+    int start=0;
+    for(int i=0;i<length;i++){
+        if(arg[i]==' ' && i==0)
+            start+=1;
+        else if(arg[i]==' '){
+            vec.push_back(arg.substr(start,i-start));
+            start=i+1;
+        }
+        else if(i==length-1){
+            vec.push_back(arg.substr(start,i+1-start));
+        }
+    }
+    printf("command:【");
+    cout << cmd ;
+    vector<string>::iterator iter = vec.begin();
+    while(iter != vec.end()){
+        cout << " " << *iter;
+        args[cnt] = (char*)(*iter).c_str();
+        cnt ++ ;
+        iter++ ;
+    }
+    printf("】");
+    args[0] = (char*)(cmd.c_str());
+    // Fork and exec the command
+    pid = fork();
+    if (pid == 0) {
+        // Child process 
+        if (execvp(cmd.c_str(), args) == -1) {
+            cout << endl << "EXEC :ERROR with system call execve" << endl;
+        }
+        // never reached
+    }
+    // Parent process
+    waitpid(pid, NULL, 0);
+    printf("exit\n");
 }
 
 string Executer::execute(string cmd){
@@ -55,9 +107,9 @@ string Executer::execute(string cmd){
     int ret = 0;
     FILE *fp;
     //popen_res res_t;
- 
     //res_t = Executer::mypopen((char*)cmd.c_str(), 'r');
     //fp = res_t.fp;
+    printf("command:【%s】", cmd.c_str());
     fp = popen(cmd.c_str(), "r");
     if(fp == NULL){
         perror("popen error");
@@ -74,7 +126,7 @@ string Executer::execute(string cmd){
         exit(1);
     }
     else{
-        printf("command:【%s】exit with status【%d】command return【%d】\n", cmd.c_str(), ret, WEXITSTATUS(ret));
+        printf("exit with status【%d】command return【%d】\n", ret, WEXITSTATUS(ret));
     }
     //res = res + "pid" + to_string(res_t.pid);
     return res;

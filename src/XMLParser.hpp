@@ -15,6 +15,7 @@ public:
     XMLParser(std::string path);
     void loadECArgs(std::vector<std::string> event_list);
     bool parse();
+    void setModelName(std::string name){modelName = name;}
     void setECFunc(double (*eneryCost)(std::map<std::string, int>, std::map<int, double> )){this->eneryCost = eneryCost;}
 private:
     bool loadXML(std::string path);
@@ -34,7 +35,7 @@ private:
     int nextI;
 
     std::string docPath;
-
+    std::string modelName;
     double (*eneryCost)(std::map<std::string, int>, std::map<int, double> );
 };
 #endif

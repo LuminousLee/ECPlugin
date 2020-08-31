@@ -45,6 +45,9 @@
         "deque": "cpp",
         "stack": "cpp",
         "fstream": "cpp",
-        "cerrno": "cpp"
+        "cerrno": "cpp",
+        "iterator": "cpp",
+        "queue": "cpp",
+        "algorithm": "cpp"
     }
 }

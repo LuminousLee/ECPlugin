@@ -47,6 +47,10 @@ string Args::getDatabasePath(){
     return this->databasePath;
 }
 
+bool Args::getStructFlag(){
+    return this->structFlag;
+}
+
 void Args::getMPICmd(){
     if(Args::mpi_cmd != ""){
         string mpi_cmd_t = "mpiexec " + Args::mpi_cmd ;
@@ -60,7 +64,8 @@ void Args::getAppCmd(){
     string subcmd;
     istringstream istr(hpccmd);
     while(istr >> subcmd){
-        if(subcmd.at(0) == '-') flag = false;
+        if(subcmd == "-t") continue;
+        if(subcmd[0] == '-') flag = false;
         else if(flag) break;
         else flag = true;
     }
@@ -82,13 +87,18 @@ void Args::getAppCmd(){
 void Args::getProfCmd(){
     string profcmd;
     string source_code = Args::command[2].substr(8, Args::command[2].length()-8);
-    profcmd = "hpcprof -S ./" + Args::app_name + ".hpcstruct";
+    if(!Args::structFlag){
+        profcmd = "hpcprof -S ./" + Args::app_name + ".hpcstruct";
+    }else {
+        profcmd = "hpcprof -S" + Args::structPath;
+    }
+    
     profcmd.append(" -I " + source_code);
     profcmd.append(" ./hpctoolkit-" + app_name + "-measurements");
     Args::command[2] = profcmd;
 }
 
-void Args::insertECcmd(){
+void Args::insertECcmd(vector<string> eventVec = ECModel::event_list){
     string hpccmd = Args::command[0];
 
     int pos = hpccmd.find("-e");
@@ -109,7 +119,7 @@ void Args::insertECcmd(){
     }
 
     vector<string>::iterator it;
-    for(it=ECModel::event_list.begin(); it!=ECModel::event_list.end(); it++){
+    for(it=eventVec.begin(); it!=eventVec.end(); it++){
         if(hpccmd.find(*it) == string::npos)
             hpccmd.insert(pos, "-e " + *it + " ");
     }
@@ -139,39 +149,42 @@ void Args::parse(int argc, const char* const argv[]){
     try{
         int cmdIndex = 0;
         string cmd[4];
-        char str[30];
+        //string str;
+        char str[500];
         for(int i=1; i<argc; i++){
+            //str = argv[i];
+            //cout << str << endl;
             strcpy(str,argv[i]);
-            if(str==NULL || *str=='\0'){
+            if(str==NULL|| strcmp(str,"\0")==0){
                 continue;
             }
 
-            /*if(strcmp(str, "--struct") == 0){
+            if(strcmp(str, "--struct") == 0){
                 cmdIndex = 1;
+                Args::structFlag=true;
                 continue;
-            }*/
+            }
 
-            if(strcmp(str, "--prof") == 0){
+            if(strcmp(str,"--prof")==0){
                 cmdIndex = 2;
                 continue;
             }
 
-            if(strcmp(str, "--mpi") == 0){
+            if(strcmp(str,"--mpi")==0){
                 cmdIndex = 3;
                 continue;
             }
         
-            cmd[cmdIndex].append (string(" ").append(str));
+            cmd[cmdIndex].append(string(" ").append(str));
         }
-        for(int i=0; i<3; i++){
-            Args::command[i].append(cmd[i]);
-        }
-    
+        Args::command[0].append(cmd[0]);
+        Args::command[2].append(cmd[2]);
+        Args::structPath.append(cmd[1]);
         Args::mpi_cmd.append(cmd[3]);
     
         Args::getAppCmd(); 
         Args::getProfCmd();
-        Args::insertECcmd();
+        //Args::insertECcmd();
         Args::getMPICmd();
     }catch(exception e){
         cout << "error in parsing:" << e.what() << endl;
