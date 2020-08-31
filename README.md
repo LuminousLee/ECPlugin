@@ -37,9 +37,14 @@ ECPlugin [hpcrun-paras] [app] [app-paras] --struct [hpcstruct-file] --prof [hpcp
 #model.hpcmodel:
 
   file example:
+
   event: $1 : CPUTIME@5000
+
   event: $2 : cache-misses
+
   model: $1 + $2 = MyModel
+  
 
   #Note:
+
   'model: $1 + $2 = MyModel' can be ignored. (This can be look as an event-listed file)
