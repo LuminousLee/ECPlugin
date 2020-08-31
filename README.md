@@ -47,4 +47,4 @@ ECPlugin [hpcrun-paras] [app] [app-paras] --struct [hpcstruct-file] --prof [hpcp
 
   #Note:
 
-  'model: $1 + $2 = MyModel' can be ignored. (This can be look as an event-listed file)
+  'model: $1 + $2 = MyModel' can be ignored. (This can be looked as an event-listed file)
