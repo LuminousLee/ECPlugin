@@ -19,6 +19,7 @@ map<string, string> ModelLoader::calMap;
  * */
 void ModelLoader::load(string filepath){
     fstream fs1(filepath, std::ios::in);
+    if(!fs1) throw string("file not found");
     char line[100];
     while(!fs1.eof()){
         //read line
@@ -279,6 +280,7 @@ double ModelLoader::model(map<string, int> event_map, map<int, double> event_val
             t2 = Queue.front();
             Queue.pop();
         }
+        //printNode(t1); printNode(t2); printNode(Queue.front()); cout << endl;
         if(t1.var.isStr){
             try{
                 t1.var.var1 = event_value[event_map[calMap[t1.var.var2]]];

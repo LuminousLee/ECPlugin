@@ -29,7 +29,47 @@ static int real_main(int argc, char* argv[]){
     Args args;
     args.parse(argc, argv);
     ModelLoader mloader;
-    mloader.load();
+    Executer exec;
+    try{mloader.load();}
+    catch(string s){
+        if(s != "file not found") exit(0);
+        args.insertECcmd(ECModel::event_list);
+        int pos = args.getCommand(0).find(" ");
+        string cmd = args.getCommand(0).substr(0, pos);
+        string argvs = args.getCommand(0).substr(pos+1, args.getCommand(0).length());
+        string ret = exec.exec(cmd, 0, argvs);
+        //string ret = exec.exec(args.getCommand(0), 1);
+        if(ret == "error") {
+            throw "hpcrun error, exit with " + ret;
+            exit(-1);
+        }
+        cout << ret;
+        args.setMeasurementsPath(findNewDir("measurements"));
+        if(!args.getStructFlag()){
+            ret = exec.exec(args.getCommand(1), 1);
+            if(ret == "error") {
+                throw "hpcstruct error, exit with " + ret;
+                exit(-1);
+            }
+            cout << ret;
+        }
+    
+        ret = exec.exec(args.getCommand(2), 1);
+        if(ret == "error") {
+            throw "hpcprof error, exit with " + ret;
+            exit(-1);
+        }
+        args.setDatabasePath(ret);
+        cout<< ret;
+        cout << "DB: " <<args.getDatabasePath()<<endl;
+        XMLParser parser(args.getDatabasePath());
+        parser.loadECArgs(ECModel::event_list);
+        parser.setECFunc(ECModel::energyCost);
+        parser.setModelName("EneryConsumption");
+        parser.parse();
+        return 0;
+    }
+    
     //mloader.printModel();
     Model m = mloader.nextModel();
     if(!m.event_list.empty()){
@@ -38,7 +78,7 @@ static int real_main(int argc, char* argv[]){
     }else if(m.emptyModel) exit(0);
     //args.printCmd();
 
-    Executer exec;
+    
     int pos = args.getCommand(0).find(" ");
     string cmd = args.getCommand(0).substr(0, pos);
     string argvs = args.getCommand(0).substr(pos+1, args.getCommand(0).length());
@@ -79,7 +119,3 @@ static int real_main(int argc, char* argv[]){
     
     return 0;
 }
-
-/****
- * yhrun -p th_mt -N 1 -n 1 -c 32 ./ECPlugin -t  ../lqcd-gcc8.2.0/compiled/chroma.20190402/bin/chroma -i data/hadspec_16_16_16_16.ini.xml       -o out_th_mt_1_16_16_16_16_16 --struct ./chroma.hpcstruct --prof ../lqcd-gcc8.2.0/chroma/
- * */

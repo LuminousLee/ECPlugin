@@ -73,6 +73,12 @@ private:
         return false;
     }
 
+    static void printNode(NodeType t){
+        if(t.isOp) cout << t.op << " ";
+        else if(t.var.isStr) cout << t.var.var2 << " ";
+        else cout << t.var.var1 << " ";
+    }
+
     static map<string, string> calMap;
     static queue<NodeType> calQueue;
     map<string, string> SampMap;
